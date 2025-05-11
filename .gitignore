@@ -5,3 +5,4 @@ notes.json
 node_modules/
 .env
 .DS_Store
+archieve/
