@@ -30,62 +30,6 @@
     <!-- Week 1 -->
     <div class="week">
         <h2>Week 1: Arrays & Strings</h2>
-        <!-- problems 1-8 -->
-        <!-- ... existing content ... -->
-    </div>
-    <!-- Week 2 -->
-    <div class="week">
-        <h2>Week 2: Linked Lists, Stacks & Queues</h2>
-        <!-- problems 2-1 to 2-7 -->
-    </div>
-    <!-- Week 3 -->
-    <div class="week">
-        <h2>Week 3: Recursion & Backtracking</h2>
-        <!-- problems 3-1 to 3-7 -->
-    </div>
-    <!-- Week 4 -->
-    <div class="week">
-        <h2>Week 4: Trees (Binary Trees & BSTs)</h2>
-        <!-- problems 4-1 to 4-6 -->
-    </div>
-
-
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>8 Week DSA Plan (Weeks 1-4)</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        .week { margin-bottom: 40px; }
-        .problem { margin: 10px 0; }
-        textarea { display: block; width: 100%; height: 60px; margin-top: 5px; }
-    </style>
-    <script>
-        function saveState(id) {
-            localStorage.setItem(id, document.getElementById(id).checked);
-        }
-        function saveNotes(id) {
-            localStorage.setItem(id, document.getElementById(id).value);
-        }
-        function loadState() {
-            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-                const state = localStorage.getItem(cb.id);
-                if (state !== null) cb.checked = state === 'true';
-            });
-            document.querySelectorAll('textarea').forEach(area => {
-                const notes = localStorage.getItem(area.id);
-                if (notes !== null) area.value = notes;
-            });
-        }
-        window.onload = loadState;
-    </script>
-</head>
-<body>
-    <!-- Week 1 -->
-    <div class="week">
-        <h2>Week 1: Arrays & Strings</h2>
         <div class="problem">
             <label><input type="checkbox" id="problem-1-1" onchange="saveState('problem-1-1')">
                 <a href="https://leetcode.com/problems/two-sum/" target="_blank">Two Sum – #1</a>
