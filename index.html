@@ -12,49 +12,97 @@
             padding: 20px;
             background-color: #f4f4f4;
         }
-        h1, h2, h3 {
-            color: #333;
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .github-info {
+            background: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
         }
         .week {
             margin-bottom: 40px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .problem {
-            margin: 10px 0;
-            padding: 10px;
-            background-color: #fff;
-            border: 1px solid #ddd;
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
             border-radius: 5px;
         }
         .problem label {
             display: flex;
             align-items: center;
+            margin-bottom: 10px;
         }
         .problem input[type="checkbox"] {
             margin-right: 10px;
         }
-        .problem a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        .problem a:hover {
-            text-decoration: underline;
-        }
         .problem textarea {
-            width: 100%;
+            width: calc(100% - 22px);
             margin-top: 10px;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
+            min-height: 60px;
             resize: vertical;
-            min-height: 50px;
         }
-        p {
-            line-height: 1.6;
+        .save-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .save-btn:hover {
+            background-color: #218838;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .status {
+            display: none;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .status.success {
+            display: block;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            display: block;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
     </style>
 </head>
 <body>
-    <h1>LeetCode Problems Tracker</h1>
+    <div class="header">
+        <h1>LeetCode Problems Tracker</h1>
+        <div class="github-info">
+            <h3>GitHub Sync Settings</h3>
+            <p>Your progress is saved locally. To sync with GitHub:</p>
+            <button onclick="configureGitHub()" class="save-btn">Configure GitHub</button>
+            <div id="github-status" class="status"></div>
+        </div>
+    </div>
+
     <h2>Version 1: 8 Weeks Plan</h2>
     <!-- Week 1: Arrays & Strings -->
     <div class="week">
@@ -65,6 +113,7 @@
                 <a href="https://leetcode.com/problems/two-sum/" target="_blank">Two Sum – #1</a>
             </label>
             <textarea id="notes-v1-w1-p1" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w1-p1')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -72,6 +121,7 @@
                 <a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock/" target="_blank">Best Time to Buy and Sell Stock – #121</a>
             </label>
             <textarea id="notes-v1-w1-p2" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w1-p2')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -79,6 +129,7 @@
                 <a href="https://leetcode.com/problems/valid-palindrome/" target="_blank">Valid Palindrome – #125</a>
             </label>
             <textarea id="notes-v1-w1-p3" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w1-p3')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -86,6 +137,7 @@
                 <a href="https://leetcode.com/problems/longest-common-prefix/" target="_blank">Longest Common Prefix – #14</a>
             </label>
             <textarea id="notes-v1-w1-p4" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w1-p4')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -93,6 +145,7 @@
                 <a href="https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/" target="_blank">Two Sum II – Input Array Is Sorted – #167</a>
             </label>
             <textarea id="notes-v1-w1-p5" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w1-p5')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -100,6 +153,7 @@
                 <a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/" target="_blank">Best Time to Buy and Sell Stock II – #122</a>
             </label>
             <textarea id="notes-v1-w1-p6" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w1-p6')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -107,6 +161,7 @@
                 <a href="https://leetcode.com/problems/valid-anagram/" target="_blank">Valid Anagram – #242</a>
             </label>
             <textarea id="notes-v1-w1-p7" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w1-p7')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -114,6 +169,7 @@
                 <a href="https://leetcode.com/problems/rotate-array/" target="_blank">Rotate Array – #189</a>
             </label>
             <textarea id="notes-v1-w1-p8" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w1-p8')">Save</button>
         </div>
     </div>
 
@@ -126,6 +182,7 @@
                 <a href="https://leetcode.com/problems/reverse-linked-list/" target="_blank">Reverse Linked List – #206</a>
             </label>
             <textarea id="notes-v1-w2-p1" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w2-p1')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -133,6 +190,7 @@
                 <a href="https://leetcode.com/problems/merge-two-sorted-lists/" target="_blank">Merge Two Sorted Lists – #21</a>
             </label>
             <textarea id="notes-v1-w2-p2" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w2-p2')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -140,6 +198,7 @@
                 <a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank">Linked List Cycle – #141</a>
             </label>
             <textarea id="notes-v1-w2-p3" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w2-p3')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -147,6 +206,7 @@
                 <a href="https://leetcode.com/problems/valid-parentheses/" target="_blank">Valid Parentheses – #20</a>
             </label>
             <textarea id="notes-v1-w2-p4" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w2-p4')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -154,6 +214,7 @@
                 <a href="https://leetcode.com/problems/min-stack/" target="_blank">Min Stack – #155</a>
             </label>
             <textarea id="notes-v1-w2-p5" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w2-p5')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -161,6 +222,7 @@
                 <a href="https://leetcode.com/problems/implement-queue-using-stacks/" target="_blank">Implement Queue using Stacks – #232</a>
             </label>
             <textarea id="notes-v1-w2-p6" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w2-p6')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -168,6 +230,7 @@
                 <a href="https://leetcode.com/problems/design-circular-queue/" target="_blank">Design Circular Queue – #622</a>
             </label>
             <textarea id="notes-v1-w2-p7" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w2-p7')">Save</button>
         </div>
     </div>
 
@@ -180,6 +243,7 @@
                 <a href="https://leetcode.com/problems/fibonacci-number/" target="_blank">Fibonacci Number – #509</a>
             </label>
             <textarea id="notes-v1-w3-p1" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w3-p1')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -187,6 +251,7 @@
                 <a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/" target="_blank">Maximum Depth of Binary Tree – #104</a>
             </label>
             <textarea id="notes-v1-w3-p2" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w3-p2')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -194,6 +259,7 @@
                 <a href="https://leetcode.com/problems/binary-tree-preorder-traversal/" target="_blank">Binary Tree Preorder Traversal – #144</a>
             </label>
             <textarea id="notes-v1-w3-p3" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w3-p3')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -201,6 +267,7 @@
                 <a href="https://leetcode.com/problems/subsets/" target="_blank">Subsets – #78</a>
             </label>
             <textarea id="notes-v1-w3-p4" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w3-p4')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -208,6 +275,7 @@
                 <a href="https://leetcode.com/problems/permutations/" target="_blank">Permutations – #46</a>
             </label>
             <textarea id="notes-v1-w3-p5" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w3-p5')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -215,6 +283,7 @@
                 <a href="https://leetcode.com/problems/combination-sum/" target="_blank">Combination Sum – #39</a>
             </label>
             <textarea id="notes-v1-w3-p6" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w3-p6')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -222,6 +291,7 @@
                 <a href="https://leetcode.com/problems/letter-combinations-of-a-phone-number/" target="_blank">Letter Combinations of a Phone Number – #17</a>
             </label>
             <textarea id="notes-v1-w3-p7" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w3-p7')">Save</button>
         </div>
     </div>
 
@@ -234,6 +304,7 @@
                 <a href="https://leetcode.com/problems/binary-tree-inorder-traversal/" target="_blank">Binary Tree Inorder Traversal – #94</a>
             </label>
             <textarea id="notes-v1-w4-p1" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w4-p1')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -241,6 +312,7 @@
                 <a href="https://leetcode.com/problems/binary-tree-level-order-traversal/" target="_blank">Binary Tree Level Order Traversal – #102</a>
             </label>
             <textarea id="notes-v1-w4-p2" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w4-p2')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -248,6 +320,7 @@
                 <a href="https://leetcode.com/problems/validate-binary-search-tree/" target="_blank">Validate Binary Search Tree – #98</a>
             </label>
             <textarea id="notes-v1-w4-p3" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w4-p3')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -255,6 +328,7 @@
                 <a href="https://leetcode.com/problems/symmetric-tree/" target="_blank">Symmetric Tree – #101</a>
             </label>
             <textarea id="notes-v1-w4-p4" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w4-p4')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -262,6 +336,7 @@
                 <a href="https://leetcode.com/problems/maximum-depth-of-n-ary-tree/" target="_blank">Maximum Depth of N-ary Tree – #559</a>
             </label>
             <textarea id="notes-v1-w4-p5" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w4-p5')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -269,6 +344,7 @@
                 <a href="https://leetcode.com/problems/serialize-and-deserialize-binary-tree/" target="_blank">Serialize and Deserialize Binary Tree – #297</a>
             </label>
             <textarea id="notes-v1-w4-p6" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w4-p6')">Save</button>
         </div>
     </div>
 
@@ -281,6 +357,7 @@
                 <a href="https://leetcode.com/problems/group-anagrams/" target="_blank">Group Anagrams – #49</a>
             </label>
             <textarea id="notes-v1-w5-p1" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w5-p1')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -288,6 +365,7 @@
                 <a href="https://leetcode.com/problems/top-k-frequent-elements/" target="_blank">Top K Frequent Elements – #347</a>
             </label>
             <textarea id="notes-v1-w5-p2" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w5-p2')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -295,6 +373,7 @@
                 <a href="https://leetcode.com/problems/valid-anagram/" target="_blank">Valid Anagram – #242</a>
             </label>
             <textarea id="notes-v1-w5-p3" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w5-p3')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -302,6 +381,7 @@
                 <a href="https://leetcode.com/problems/design-hashmap/" target="_blank">Design HashMap – #706</a>
             </label>
             <textarea id="notes-v1-w5-p4" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w5-p4')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -309,6 +389,7 @@
                 <a href="https://leetcode.com/problems/design-hashset/" target="_blank">Design HashSet – #705</a>
             </label>
             <textarea id="notes-v1-w5-p5" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w5-p5')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -316,6 +397,7 @@
                 <a href="https://leetcode.com/problems/merge-k-sorted-lists/" target="_blank">Merge k Sorted Lists – #23</a>
             </label>
             <textarea id="notes-v1-w5-p6" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w5-p6')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -323,6 +405,7 @@
                 <a href="https://leetcode.com/problems/sliding-window-maximum/" target="_blank">Sliding Window Maximum – #239</a>
             </label>
             <textarea id="notes-v1-w5-p7" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w5-p7')">Save</button>
         </div>
     </div>
 
@@ -335,6 +418,7 @@
                 <a href="https://leetcode.com/problems/number-of-islands/" target="_blank">Number of Islands – #200</a>
             </label>
             <textarea id="notes-v1-w6-p1" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w6-p1')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -342,6 +426,7 @@
                 <a href="https://leetcode.com/problems/clone-graph/" target="_blank">Clone Graph – #133</a>
             </label>
             <textarea id="notes-v1-w6-p2" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w6-p2')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -349,6 +434,7 @@
                 <a href="https://leetcode.com/problems/course-schedule/" target="_blank">Course Schedule – #207</a>
             </label>
             <textarea id="notes-v1-w6-p3" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w6-p3')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -356,6 +442,7 @@
                 <a href="https://leetcode.com/problems/minimum-height-trees/" target="_blank">Minimum Height Trees – #310</a>
             </label>
             <textarea id="notes-v1-w6-p4" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w6-p4')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -363,6 +450,7 @@
                 <a href="https://leetcode.com/problems/word-ladder/" target="_blank">Word Ladder – #127</a>
             </label>
             <textarea id="notes-v1-w6-p5" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w6-p5')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -370,6 +458,7 @@
                 <a href="https://leetcode.com/problems/flood-fill/" target="_blank">Flood Fill – #733</a>
             </label>
             <textarea id="notes-v1-w6-p6" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w6-p6')">Save</button>
         </div>
     </div>
 
@@ -382,6 +471,7 @@
                 <a href="https://leetcode.com/problems/climbing-stairs/" target="_blank">Climbing Stairs – #70</a>
             </label>
             <textarea id="notes-v1-w7-p1" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w7-p1')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -389,6 +479,7 @@
                 <a href="https://leetcode.com/problems/house-robber/" target="_blank">House Robber – #198</a>
             </label>
             <textarea id="notes-v1-w7-p2" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w7-p2')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -396,6 +487,7 @@
                 <a href="https://leetcode.com/problems/unique-paths/" target="_blank">Unique Paths – #62</a>
             </label>
             <textarea id="notes-v1-w7-p3" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w7-p3')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -403,6 +495,7 @@
                 <a href="https://leetcode.com/problems/longest-increasing-subsequence/" target="_blank">Longest Increasing Subsequence – #300</a>
             </label>
             <textarea id="notes-v1-w7-p4" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w7-p4')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -410,6 +503,7 @@
                 <a href="https://leetcode.com/problems/coin-change/" target="_blank">Coin Change – #322</a>
             </label>
             <textarea id="notes-v1-w7-p5" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w7-p5')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -417,6 +511,7 @@
                 <a href="https://leetcode.com/problems/word-break/" target="_blank">Word Break – #139</a>
             </label>
             <textarea id="notes-v1-w7-p6" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w7-p6')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -424,6 +519,7 @@
                 <a href="https://leetcode.com/problems/partition-equal-subset-sum/" target="_blank">Partition Equal Subset Sum – #416</a>
             </label>
             <textarea id="notes-v1-w7-p7" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w7-p7')">Save</button>
         </div>
     </div>
 
@@ -436,6 +532,7 @@
                 <a href="https://leetcode.com/problems/merge-k-sorted-lists/" target="_blank">Merge K Sorted Lists – #23</a>
             </label>
             <textarea id="notes-v1-w8-p1" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w8-p1')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -443,6 +540,7 @@
                 <a href="https://leetcode.com/problems/top-k-frequent-elements/" target="_blank">Top K Frequent Elements – #347</a>
             </label>
             <textarea id="notes-v1-w8-p2" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w8-p2')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -450,6 +548,7 @@
                 <a href="https://leetcode.com/problems/word-search/" target="_blank">Word Search – #79</a>
             </label>
             <textarea id="notes-v1-w8-p3" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w8-p3')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -457,6 +556,7 @@
                 <a href="https://leetcode.com/problems/course-schedule-ii/" target="_blank">Course Schedule II – #210</a>
             </label>
             <textarea id="notes-v1-w8-p4" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w8-p4')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -464,6 +564,7 @@
                 <a href="https://leetcode.com/problems/alien-dictionary/" target="_blank">Alien Dictionary – #269</a>
             </label>
             <textarea id="notes-v1-w8-p5" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v1-w8-p5')">Save</button>
         </div>
     </div>
 
@@ -479,6 +580,7 @@
                 <a href="https://leetcode.com/problems/two-sum/" target="_blank">Two Sum – #1</a>
             </label>
             <textarea id="notes-v2-w1-p1" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w1-p1')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -486,6 +588,7 @@
                 <a href="https://leetcode.com/problems/remove-element/" target="_blank">Remove Element – #27</a>
             </label>
             <textarea id="notes-v2-w1-p2" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w1-p2')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -493,6 +596,7 @@
                 <a href="https://leetcode.com/problems/remove-duplicates-from-sorted-array/" target="_blank">Remove Duplicates from Sorted Array – #26</a>
             </label>
             <textarea id="notes-v2-w1-p3" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w1-p3')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -500,6 +604,7 @@
                 <a href="https://leetcode.com/problems/contains-duplicate/" target="_blank">Contains Duplicate – #219</a>
             </label>
             <textarea id="notes-v2-w1-p4" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w1-p4')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -507,6 +612,7 @@
                 <a href="https://leetcode.com/problems/valid-mountain-array/" target="_blank">Valid Mountain Array – #941</a>
             </label>
             <textarea id="notes-v2-w1-p5" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w1-p5')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -514,6 +620,7 @@
                 <a href="https://leetcode.com/problems/check-if-n-and-its-double-exist/" target="_blank">Check If N and Its Double Exist – #1007</a>
             </label>
             <textarea id="notes-v2-w1-p6" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w1-p6')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -521,6 +628,7 @@
                 <a href="https://leetcode.com/problems/plus-one/" target="_blank">Plus One – #66</a>
             </label>
             <textarea id="notes-v2-w1-p7" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w1-p7')">Save</button>
         </div>
     </div>
 
@@ -533,6 +641,7 @@
                 <a href="https://leetcode.com/problems/implement-strstr/" target="_blank">Implement strStr() – #28</a>
             </label>
             <textarea id="notes-v2-w2-p1" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w2-p1')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -540,6 +649,7 @@
                 <a href="https://leetcode.com/problems/longest-common-prefix/" target="_blank">Longest Common Prefix – #14</a>
             </label>
             <textarea id="notes-v2-w2-p2" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w2-p2')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -547,6 +657,7 @@
                 <a href="https://leetcode.com/problems/length-of-last-word/" target="_blank">Length of Last Word – #58</a>
             </label>
             <textarea id="notes-v2-w2-p3" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w2-p3')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -554,6 +665,7 @@
                 <a href="https://leetcode.com/problems/first-unique-character-in-a-string/" target="_blank">First Unique Character in a String – #387</a>
             </label>
             <textarea id="notes-v2-w2-p4" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w2-p4')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -561,6 +673,7 @@
                 <a href="https://leetcode.com/problems/ransom-note/" target="_blank">Ransom Note – #383</a>
             </label>
             <textarea id="notes-v2-w2-p5" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w2-p5')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -568,6 +681,7 @@
                 <a href="https://leetcode.com/problems/reverse-string/" target="_blank">Reverse String – #344</a>
             </label>
             <textarea id="notes-v2-w2-p6" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w2-p6')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -575,6 +689,7 @@
                 <a href="https://leetcode.com/problems/valid-anagram/" target="_blank">Valid Anagram – #242</a>
             </label>
             <textarea id="notes-v2-w2-p7" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w2-p7')">Save</button>
         </div>
     </div>
 
@@ -587,6 +702,7 @@
                 <a href="https://leetcode.com/problems/reverse-linked-list/" target="_blank">Reverse Linked List – #206</a>
             </label>
             <textarea id="notes-v2-w3-p1" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w3-p1')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -594,6 +710,7 @@
                 <a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank">Linked List Cycle – #141</a>
             </label>
             <textarea id="notes-v2-w3-p2" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w3-p2')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -601,6 +718,7 @@
                 <a href="https://leetcode.com/problems/merge-two-sorted-lists/" target="_blank">Merge Two Sorted Lists – #21</a>
             </label>
             <textarea id="notes-v2-w3-p3" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w3-p3')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -608,6 +726,7 @@
                 <a href="https://leetcode.com/problems/middle-of-the-linked-list/" target="_blank">Middle of the Linked List – #876</a>
             </label>
             <textarea id="notes-v2-w3-p4" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w3-p4')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -615,6 +734,7 @@
                 <a href="https://leetcode.com/problems/remove-linked-list-elements/" target="_blank">Remove Linked List Elements – #203</a>
             </label>
             <textarea id="notes-v2-w3-p5" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w3-p5')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -622,6 +742,7 @@
                 <a href="https://leetcode.com/problems/palindrome-linked-list/" target="_blank">Palindrome Linked List – #234</a>
             </label>
             <textarea id="notes-v2-w3-p6" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w3-p6')">Save</button>
         </div>
     </div>
 
@@ -634,6 +755,7 @@
                 <a href="https://leetcode.com/problems/binary-tree-preorder-traversal/" target="_blank">Binary Tree Preorder Traversal – #144</a>
             </label>
             <textarea id="notes-v2-w4-p1" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w4-p1')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -641,6 +763,7 @@
                 <a href="https://leetcode.com/problems/binary-tree-inorder-traversal/" target="_blank">Binary Tree Inorder Traversal – #94</a>
             </label>
             <textarea id="notes-v2-w4-p2" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w4-p2')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -648,6 +771,7 @@
                 <a href="https://leetcode.com/problems/binary-tree-postorder-traversal/" target="_blank">Binary Tree Postorder Traversal – #145</a>
             </label>
             <textarea id="notes-v2-w4-p3" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w4-p3')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -655,6 +779,7 @@
                 <a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/" target="_blank">Maximum Depth of Binary Tree – #104</a>
             </label>
             <textarea id="notes-v2-w4-p4" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w4-p4')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -662,6 +787,7 @@
                 <a href="https://leetcode.com/problems/same-tree/" target="_blank">Same Tree – #100</a>
             </label>
             <textarea id="notes-v2-w4-p5" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w4-p5')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -669,6 +795,7 @@
                 <a href="https://leetcode.com/problems/invert-binary-tree/" target="_blank">Invert Binary Tree – #226</a>
             </label>
             <textarea id="notes-v2-w4-p6" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w4-p6')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -676,6 +803,7 @@
                 <a href="https://leetcode.com/problems/symmetric-tree/" target="_blank">Symmetric Tree – #101</a>
             </label>
             <textarea id="notes-v2-w4-p7" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w4-p7')">Save</button>
         </div>
     </div>
 
@@ -688,13 +816,15 @@
                 <a href="https://leetcode.com/problems/number-of-islands/" target="_blank">Number of Islands – #200</a>
             </label>
             <textarea id="notes-v2-w5-p1" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w5-p1')">Save</button>
         </div>
-        <div class="problem">
+        <div class="problem"></div>
             <label>
                 <input type="checkbox" id="v2-w5-p2">
                 <a href="https://leetcode.com/problems/flood-fill/" target="_blank">Flood Fill – #733</a>
             </label>
             <textarea id="notes-v2-w5-p2" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w5-p2')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -702,6 +832,7 @@
                 <a href="https://leetcode.com/problems/walls-and-gates/" target="_blank">Walls and Gates – #286</a>
             </label>
             <textarea id="notes-v2-w5-p3" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w5-p3')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -709,6 +840,7 @@
                 <a href="https://leetcode.com/problems/clone-graph/" target="_blank">Clone Graph – #133</a>
             </label>
             <textarea id="notes-v2-w5-p4" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w5-p4')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -716,6 +848,7 @@
                 <a href="https://leetcode.com/problems/course-schedule/" target="_blank">Course Schedule – #207</a>
             </label>
             <textarea id="notes-v2-w5-p5" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w5-p5')">Save</button>
         </div>
     </div>
 
@@ -728,6 +861,7 @@
                 <a href="https://leetcode.com/problems/climbing-stairs/" target="_blank">Climbing Stairs – #70</a>
             </label>
             <textarea id="notes-v2-w6-p1" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w6-p1')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -735,6 +869,7 @@
                 <a href="https://leetcode.com/problems/house-robber/" target="_blank">House Robber – #198</a>
             </label>
             <textarea id="notes-v2-w6-p2" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w6-p2')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -742,6 +877,7 @@
                 <a href="https://leetcode.com/problems/coin-change/" target="_blank">Coin Change – #322</a>
             </label>
             <textarea id="notes-v2-w6-p3" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w6-p3')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -749,6 +885,7 @@
                 <a href="https://leetcode.com/problems/fibonacci-number/" target="_blank">Fibonacci Number – #509</a>
             </label>
             <textarea id="notes-v2-w6-p4" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w6-p4')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -756,6 +893,7 @@
                 <a href="https://leetcode.com/problems/unique-paths/" target="_blank">Unique Paths – #62</a>
             </label>
             <textarea id="notes-v2-w6-p5" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w6-p5')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -763,6 +901,7 @@
                 <a href="https://leetcode.com/problems/longest-increasing-subsequence/" target="_blank">Longest Increasing Subsequence – #300</a>
             </label>
             <textarea id="notes-v2-w6-p6" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w6-p6')">Save</button>
         </div>
     </div>
 
@@ -775,6 +914,7 @@
                 <a href="https://leetcode.com/problems/3sum/" target="_blank">3Sum – #15</a>
             </label>
             <textarea id="notes-v2-w7-p1" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w7-p1')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -782,6 +922,7 @@
                 <a href="https://leetcode.com/problems/container-with-most-water/" target="_blank">Container With Most Water – #11</a>
             </label>
             <textarea id="notes-v2-w7-p2" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w7-p2')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -789,6 +930,7 @@
                 <a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" target="_blank">Longest Substring Without Repeating Characters – #3</a>
             </label>
             <textarea id="notes-v2-w7-p3" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w7-p3')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -796,6 +938,7 @@
                 <a href="https://leetcode.com/problems/group-anagrams/" target="_blank">Group Anagrams – #49</a>
             </label>
             <textarea id="notes-v2-w7-p4" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w7-p4')">Save</button>
         </div>
         <div class="problem">
             <label>
@@ -803,6 +946,7 @@
                 <a href="https://leetcode.com/problems/minimum-window-substring/" target="_blank">Minimum Window Substring – #76</a>
             </label>
             <textarea id="notes-v2-w7-p5" placeholder="Add notes here..."></textarea>
+            <button class="save-btn" onclick="saveNote('notes-v2-w7-p5')">Save</button>
         </div>
     </div>
 
@@ -813,49 +957,160 @@
         <p><strong>Timed Mock Interviews:</strong> Use LeetCode’s Interview Crash Course card to simulate two 45-minute sessions with 2–3 medium problems each.</p>
     </div>
 
-    <!-- JavaScript for Persistence -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load saved states and notes
-            loadStates();
-            loadNotes();
+        const GITHUB_CONFIG_KEY = 'github_config';
+        let githubConfig = null;
 
-            // Add event listeners for checkboxes
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    localStorage.setItem(this.id, this.checked);
-                });
-            });
-
-            // Add event listeners for textareas
-            const textareas = document.querySelectorAll('textarea');
-            textareas.forEach(textarea => {
-                textarea.addEventListener('input', function() {
-                    localStorage.setItem(this.id, this.value);
-                });
-            });
+        // Load GitHub configuration on startup
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGitHubConfig();
+            loadStatesAndNotes();
         });
 
-        function loadStates() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
+        function loadGitHubConfig() {
+            const savedConfig = localStorage.getItem(GITHUB_CONFIG_KEY);
+            if (savedConfig) {
+                githubConfig = JSON.parse(savedConfig);
+                updateGitHubStatus('Connected to GitHub repository: ' + githubConfig.repo, 'success');
+            }
+        }
+
+        function configureGitHub() {
+            const token = prompt('Enter your GitHub Personal Access Token (needs repo scope):');
+            if (!token) return;
+
+            const repo = prompt('Enter your repository name (username/repo):');
+            if (!repo) return;
+
+            githubConfig = { token, repo };
+            localStorage.setItem(GITHUB_CONFIG_KEY, JSON.stringify(githubConfig));
+            updateGitHubStatus('GitHub configuration saved successfully!', 'success');
+            syncWithGitHub();
+        }
+
+        function updateGitHubStatus(message, type = 'success') {
+            const status = document.getElementById('github-status');
+            status.textContent = message;
+            status.className = 'status ' + type;
+        }
+
+        async function syncWithGitHub() {
+            if (!githubConfig) {
+                updateGitHubStatus('Please configure GitHub first', 'error');
+                return;
+            }
+
+            try {
+                const allNotes = getAllNotesData();
+                for (const [id, content] of Object.entries(allNotes)) {
+                    await saveNoteToGitHub(id, content);
+                }
+                updateGitHubStatus('All notes synced with GitHub successfully!', 'success');
+            } catch (error) {
+                console.error('Sync error:', error);
+                updateGitHubStatus('Error syncing with GitHub: ' + error.message, 'error');
+            }
+        }
+
+        function getAllNotesData() {
+            const notes = {};
+            const textareas = document.querySelectorAll('textarea');
+            textareas.forEach(textarea => {
+                const savedNote = localStorage.getItem(textarea.id);
+                if (savedNote) {
+                    notes[textarea.id] = savedNote;
+                }
+            });
+            return notes;
+        }
+
+        async function saveNoteToGitHub(id, content) {
+            if (!githubConfig) return;
+
+            const path = `notes/${id}.txt`;
+            const encodedContent = btoa(unescape(encodeURIComponent(content)));
+
+            try {
+                // Try to get existing file first
+                const existingFile = await fetch(`https://api.github.com/repos/${githubConfig.repo}/contents/${path}`, {
+                    headers: {
+                        'Authorization': `token ${githubConfig.token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                }).then(res => res.json()).catch(() => null);
+
+                const method = 'PUT';
+                const body = {
+                    message: `Update note ${id}`,
+                    content: encodedContent
+                };
+
+                if (existingFile?.sha) {
+                    body.sha = existingFile.sha;
+                }
+
+                await fetch(`https://api.github.com/repos/${githubConfig.repo}/contents/${path}`, {
+                    method,
+                    headers: {
+                        'Authorization': `token ${githubConfig.token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body)
+                });
+            } catch (error) {
+                console.error(`Error saving note ${id}:`, error);
+                throw error;
+            }
+        }
+
+        // Local storage functions
+        function saveState(id) {
+            const checkbox = document.getElementById(id);
+            localStorage.setItem(id, checkbox.checked);
+        }
+
+        function saveNote(id) {
+            const textarea = document.getElementById(id);
+            const content = textarea.value;
+            localStorage.setItem(id, content);
+            
+            if (githubConfig) {
+                saveNoteToGitHub(id, content)
+                    .then(() => updateGitHubStatus('Note saved successfully!', 'success'))
+                    .catch(error => updateGitHubStatus('Error saving note: ' + error.message, 'error'));
+            }
+        }
+
+        function loadStatesAndNotes() {
+            // Load checkboxes
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
                 const savedState = localStorage.getItem(checkbox.id);
                 if (savedState !== null) {
                     checkbox.checked = savedState === 'true';
                 }
             });
-        }
 
-        function loadNotes() {
-            const textareas = document.querySelectorAll('textarea');
-            textareas.forEach(textarea => {
-                const savedNotes = localStorage.getItem(textarea.id);
-                if (savedNotes !== null) {
-                    textarea.value = savedNotes;
+            // Load notes
+            document.querySelectorAll('textarea').forEach(textarea => {
+                const savedNote = localStorage.getItem(textarea.id);
+                if (savedNote !== null) {
+                    textarea.value = savedNote;
                 }
             });
         }
+
+        // Add event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add change listeners to checkboxes
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', () => saveState(checkbox.id));
+            });
+
+            // Add input listeners to textareas
+            document.querySelectorAll('textarea').forEach(textarea => {
+                textarea.addEventListener('input', () => saveNote(textarea.id));
+            });
+        });
     </script>
 </body>
 </html>
