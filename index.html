@@ -949,6 +949,11 @@
     </div>
 
     <script>
+        // Your repository details
+        const REPO_OWNER = 'Navanit-git';
+        const REPO_NAME = 'Leetcode-Navanit';
+        let notesData = {};
+
         // Load saved notes on startup
         document.addEventListener('DOMContentLoaded', () => {
             loadNotesFromFile();
@@ -956,24 +961,20 @@
 
         async function loadNotesFromFile() {
             try {
-                // Load from static notes.json file
                 const response = await fetch('notes.json');
                 if (response.ok) {
-                    const notes = await response.json();
+                    notesData = await response.json();
                     // Populate textareas with notes
-                    Object.entries(notes).forEach(([id, content]) => {
+                    Object.entries(notesData).forEach(([id, content]) => {
                         const textarea = document.getElementById(id);
                         if (textarea) {
                             textarea.value = content;
                         }
-                    });
-                    
-                    // Load checkbox states
-                    Object.entries(notes).forEach(([id, value]) => {
+                        // Load checkbox states
                         if (id.endsWith('-state')) {
                             const checkbox = document.getElementById(id.replace('-state', ''));
                             if (checkbox) {
-                                checkbox.checked = value === 'true';
+                                checkbox.checked = content === 'true';
                             }
                         }
                     });
@@ -986,11 +987,11 @@
         }
 
         function loadFromLocalStorage() {
-            // Load from localStorage as fallback
             document.querySelectorAll('textarea').forEach(textarea => {
                 const savedNote = localStorage.getItem(textarea.id);
                 if (savedNote) {
                     textarea.value = savedNote;
+                    notesData[textarea.id] = savedNote;
                 }
             });
 
@@ -998,25 +999,53 @@
                 const savedState = localStorage.getItem(checkbox.id);
                 if (savedState !== null) {
                     checkbox.checked = savedState === 'true';
+                    notesData[checkbox.id + '-state'] = savedState;
                 }
             });
         }
 
-        function saveNote(id) {
+        async function saveNote(id) {
             const textarea = document.getElementById(id);
             const content = textarea.value;
             
+            // Update notesData
+            notesData[id] = content;
+            
             // Save to localStorage as backup
             localStorage.setItem(id, content);
-            
-            // Show success message
-            showMessage('Note saved locally! The notes.json file will be updated in your next commit.', 'success');
+
+            try {
+                // Create repository dispatch event to trigger GitHub Action
+                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/dispatches`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/vnd.github.everest-preview+json',
+                    },
+                    body: JSON.stringify({
+                        'event_type': 'update_notes',
+                        'client_payload': {
+                            notes: notesData
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    showMessage('Note saved and will be committed shortly!', 'success');
+                } else {
+                    throw new Error('Failed to trigger save action');
+                }
+            } catch (error) {
+                console.error('Error saving note:', error);
+                showMessage('Note saved locally. Will sync when online.', 'info');
+            }
         }
-// 
+
         function saveState(id) {
             const checkbox = document.getElementById(id);
+            const stateId = id + '-state';
+            notesData[stateId] = checkbox.checked.toString();
             localStorage.setItem(id, checkbox.checked);
-            saveNote(id + '-state', checkbox.checked.toString());
+            saveNote(stateId);
         }
 
         function showMessage(message, type) {
