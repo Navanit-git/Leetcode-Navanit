@@ -951,11 +951,42 @@
     <script>
         // Load saved notes on startup
         document.addEventListener('DOMContentLoaded', () => {
-            loadNotesFromStorage();
+            loadNotesFromFile();
         });
 
-        function loadNotesFromStorage() {
-            // Load from localStorage
+        async function loadNotesFromFile() {
+            try {
+                // Load from static notes.json file
+                const response = await fetch('notes.json');
+                if (response.ok) {
+                    const notes = await response.json();
+                    // Populate textareas with notes
+                    Object.entries(notes).forEach(([id, content]) => {
+                        const textarea = document.getElementById(id);
+                        if (textarea) {
+                            textarea.value = content;
+                        }
+                    });
+                    
+                    // Load checkbox states
+                    Object.entries(notes).forEach(([id, value]) => {
+                        if (id.endsWith('-state')) {
+                            const checkbox = document.getElementById(id.replace('-state', ''));
+                            if (checkbox) {
+                                checkbox.checked = value === 'true';
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading notes:', error);
+                showMessage('Error loading notes. Loading from local storage...', 'error');
+                loadFromLocalStorage();
+            }
+        }
+
+        function loadFromLocalStorage() {
+            // Load from localStorage as fallback
             document.querySelectorAll('textarea').forEach(textarea => {
                 const savedNote = localStorage.getItem(textarea.id);
                 if (savedNote) {
@@ -963,7 +994,6 @@
                 }
             });
 
-            // Load checkbox states
             document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
                 const savedState = localStorage.getItem(checkbox.id);
                 if (savedState !== null) {
@@ -976,42 +1006,17 @@
             const textarea = document.getElementById(id);
             const content = textarea.value;
             
-            // Save to localStorage
+            // Save to localStorage as backup
             localStorage.setItem(id, content);
-            showMessage('Note saved successfully!', 'success');
-
-            // Create the notes file if it doesn't exist
-            createNotesFileIfNeeded(id, content);
-        }
-
-        async function createNotesFileIfNeeded(id, content) {
-            try {
-                const response = await fetch(`https://api.github.com/repos/Navanit-git/Leetcode-Navanit/contents/notes/notes.json`, {
-                    method: 'PUT',
-                    headers: {
-                        'Accept': 'application/vnd.github.v3+json',
-                    },
-                    body: JSON.stringify({
-                        message: 'Create or update notes file',
-                        content: btoa(JSON.stringify({ [id]: content })),
-                        branch: 'main'
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to save note to GitHub');
-                }
-            } catch (error) {
-                console.error('Error saving to GitHub:', error);
-                // Still saved locally, so just show info message
-                showMessage('Note saved locally', 'info');
-            }
+            
+            // Show success message
+            showMessage('Note saved locally! The notes.json file will be updated in your next commit.', 'success');
         }
 
         function saveState(id) {
             const checkbox = document.getElementById(id);
             localStorage.setItem(id, checkbox.checked);
-            showMessage('Progress saved!', 'success');
+            saveNote(id + '-state', checkbox.checked.toString());
         }
 
         function showMessage(message, type) {
