@@ -954,10 +954,43 @@
         const NOTES_FILE_PATH = 'notes.json';
         let notesData = {};
 
+        // Token management functions
+        function getGitHubToken() {
+            return localStorage.getItem('github_token');
+        }
+
+        function setGitHubToken(token) {
+            localStorage.setItem('github_token', token);
+        }
+
+        async function promptForToken() {
+            const token = prompt(
+                'Please enter your GitHub Personal Access Token.\n' +
+                'You can create one at: https://github.com/settings/tokens\n' +
+                'Make sure to grant "repo" scope permissions.'
+            );
+            if (token) {
+                setGitHubToken(token);
+                return token;
+            }
+            return null;
+        }
+
+        async function ensureToken() {
+            let token = getGitHubToken();
+            if (!token) {
+                token = await promptForToken();
+            }
+            return token;
+        }
+
         // Load notes on startup
-        document.addEventListener('DOMContentLoaded', () =>
-         {
-            loadNotesFromGitHub();
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (await ensureToken()) {
+                loadNotesFromGitHub();
+            } else {
+                showMessage('GitHub token is required to load and save notes.', 'error');
+            }
         });
 
         async function loadNotesFromGitHub() {
@@ -992,6 +1025,12 @@
         }
 
         async function saveNote(id) {
+            const token = await ensureToken();
+            if (!token) {
+                showMessage('GitHub token is required to save notes.', 'error');
+                return;
+            }
+
             const textarea = document.getElementById(id);
             const content = textarea.value;
             notesData[id] = content;
@@ -999,6 +1038,12 @@
         }
 
         async function saveState(id) {
+            const token = await ensureToken();
+            if (!token) {
+                showMessage('GitHub token is required to save state.', 'error');
+                return;
+            }
+
             const checkbox = document.getElementById(id);
             const stateId = id + '-state';
             notesData[stateId] = checkbox.checked.toString();
@@ -1006,12 +1051,17 @@
         }
 
         async function updateNotesFile() {
+            const token = await ensureToken();
+            if (!token) {
+                return;
+            }
+
             try {
                 const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${NOTES_FILE_PATH}`, {
                     method: 'PUT',
                     headers: {
-                         "Accept": "application/vnd.github.v3+json",
-                          "Authorization": "token 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"
+                        "Accept": "application/vnd.github.v3+json",
+                        "Authorization": `token ${token}`
                     },
                     body: JSON.stringify({
                         message: 'Update notes.json',
@@ -1023,7 +1073,14 @@
                 if (response.ok) {
                     showMessage('Notes saved successfully!', 'success');
                 } else {
-                    throw new Error('Failed to update notes.json');
+                    const errorData = await response.json();
+                    if (errorData.message === 'Bad credentials') {
+                        localStorage.removeItem('github_token');
+                        showMessage('Invalid token. Please enter a new token.', 'error');
+                        await promptForToken();
+                    } else {
+                        throw new Error('Failed to update notes.json');
+                    }
                 }
             } catch (error) {
                 console.error('Error saving notes:', error);
@@ -1032,7 +1089,16 @@
         }
 
         async function getFileSha() {
-            const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${NOTES_FILE_PATH}`);
+            const token = getGitHubToken();
+            const response = await fetch(
+                `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${NOTES_FILE_PATH}`,
+                {
+                    headers: {
+                        "Accept": "application/vnd.github.v3+json",
+                        "Authorization": `token ${token}`
+                    }
+                }
+            );
             if (response.ok) {
                 const fileData = await response.json();
                 return fileData.sha;
