@@ -1,0 +1,508 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeetCode Problems Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .week {
+            margin-bottom: 40px;
+        }
+        .problem {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .problem label {
+            display: flex;
+            align-items: center;
+        }
+        .problem input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        .problem a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .problem a:hover {
+            text-decoration: underline;
+        }
+        .problem textarea {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+    <h1>LeetCode Problems Tracker</h1>
+
+    <!-- Week 1: Arrays (Easy) -->
+    <div class="week">
+        <h2>Week 1: Arrays (Easy)</h2>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-1-1" onchange="saveState('problem-1-1')">
+                <a href="https://leetcode.com/problems/two-sum/" target="_blank">Two Sum (1)</a>
+            </label>
+            <textarea id="notes-1-1" placeholder="Add notes here..." oninput="saveNotes('notes-1-1')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-1-2" onchange="saveState('problem-1-2')">
+                <a href="https://leetcode.com/problems/remove-element/" target="_blank">Remove Element (27)</a>
+            </label>
+            <textarea id="notes-1-2" placeholder="Add notes here..." oninput="saveNotes('notes-1-2')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-1-3" onchange="saveState('problem-1-3')">
+                <a href="https://leetcode.com/problems/remove-duplicates-from-sorted-array/" target="_blank">Remove Duplicates from Sorted Array (26)</a>
+            </label>
+            <textarea id="notes-1-3" placeholder="Add notes here..." oninput="saveNotes('notes-1-3')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-1-4" onchange="saveState('problem-1-4')">
+                <a href="https://leetcode.com/problems/contains-duplicate/" target="_blank">Contains Duplicate (217)</a>
+            </label>
+            <textarea id="notes-1-4" placeholder="Add notes here..." oninput="saveNotes('notes-1-4')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-1-5" onchange="saveState('problem-1-5')">
+                <a href="https://leetcode.com/problems/valid-mountain-array/" target="_blank">Valid Mountain Array (941)</a>
+            </label>
+            <textarea id="notes-1-5" placeholder="Add notes here..." oninput="saveNotes('notes-1-5')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-1-6" onchange="saveState('problem-1-6')">
+                <a href="https://leetcode.com/problems/check-if-n-and-its-double-exist/" target="_blank">Check If N and Its Double Exist (1007)</a>
+            </label>
+            <textarea id="notes-1-6" placeholder="Add notes here..." oninput="saveNotes('notes-1-6')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-1-7" onchange="saveState('problem-1-7')">
+                <a href="https://leetcode.com/problems/plus-one/" target="_blank">(Optional) Plus One (66)</a>
+            </label>
+            <textarea id="notes-1-7" placeholder="Add notes here..." oninput="saveNotes('notes-1-7')"></textarea>
+        </div>
+    </div>
+
+    <!-- Week 2: Strings (Easy) -->
+    <div class="week">
+        <h2>Week 2: Strings (Easy)</h2>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-2-1" onchange="saveState('problem-2-1')">
+                <a href="https://leetcode.com/problems/implement-strstr/" target="_blank">Implement strStr() (28)</a>
+            </label>
+            <textarea id="notes-2-1" placeholder="Add notes here..." oninput="saveNotes('notes-2-1')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-2-2" onchange="saveState('problem-2-2')">
+                <a href="https://leetcode.com/problems/longest-common-prefix/" target="_blank">Longest Common Prefix (14)</a>
+            </label>
+            <textarea id="notes-2-2" placeholder="Add notes here..." oninput="saveNotes('notes-2-2')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-2-3" onchange="saveState('problem-2-3')">
+                <a href="https://leetcode.com/problems/length-of-last-word/" target="_blank">Length of Last Word (58)</a>
+            </label>
+            <textarea id="notes-2-3" placeholder="Add notes here..." oninput="saveNotes('notes-2-3')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-2-4" onchange="saveState('problem-2-4')">
+                <a href="https://leetcode.com/problems/first-unique-character-in-a-string/" target="_blank">First Unique Character in a String (387)</a>
+            </label>
+            <textarea id="notes-2-4" placeholder="Add notes here..." oninput="saveNotes('notes-2-4')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-2-5" onchange="saveState('problem-2-5')">
+                <a href="https://leetcode.com/problems/ransom-note/" target="_blank">Ransom Note (383)</a>
+            </label>
+            <textarea id="notes-2-5" placeholder="Add notes here..." oninput="saveNotes('notes-2-5')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-2-6" onchange="saveState('problem-2-6')">
+                <a href="https://leetcode.com/problems/reverse-string/" target="_blank">Reverse String (344)</a>
+            </label>
+            <textarea id="notes-2-6" placeholder="Add notes here..." oninput="saveNotes('notes-2-6')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-2-7" onchange="saveState('problem-2-7')">
+                <a href="https://leetcode.com/problems/valid-anagram/" target="_blank">(Optional) Valid Anagram (242)</a>
+            </label>
+            <textarea id="notes-2-7" placeholder="Add notes here..." oninput="saveNotes('notes-2-7')"></textarea>
+        </div>
+    </div>
+
+    <!-- Week 3: Linked Lists (Easy) -->
+    <div class="week">
+        <h2>Week 3: Linked Lists (Easy)</h2>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-3-1" onchange="saveState('problem-3-1')">
+                <a href="https://leetcode.com/problems/reverse-linked-list/" target="_blank">Reverse Linked List (206)</a>
+            </label>
+            <textarea id="notes-3-1" placeholder="Add notes here..." oninput="saveNotes('notes-3-1')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-3-2" onchange="saveState('problem-3-2')">
+                <a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank">Linked List Cycle (141)</a>
+            </label>
+            <textarea id="notes-3-2" placeholder="Add notes here..." oninput="saveNotes('notes-3-2')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-3-3" onchange="saveState('problem-3-3')">
+                <a href="https://leetcode.com/problems/merge-two-sorted-lists/" target="_blank">Merge Two Sorted Lists (21)</a>
+            </label>
+            <textarea id="notes-3-3" placeholder="Add notes here..." oninput="saveNotes('notes-3-3')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-3-4" onchange="saveState('problem-3-4')">
+                <a href="https://leetcode.com/problems/middle-of-the-linked-list/" target="_blank">Middle of the Linked List (876)</a>
+            </label>
+            <textarea id="notes-3-4" placeholder="Add notes here..." oninput="saveNotes('notes-3-4')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-3-5" onchange="saveState('problem-3-5')">
+                <a href="https://leetcode.com/problems/remove-linked-list-elements/" target="_blank">Remove Linked List Elements (203)</a>
+            </label>
+            <textarea id="notes-3-5" placeholder="Add notes here..." oninput="saveNotes('notes-3-5')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-3-6" onchange="saveState('problem-3-6')">
+                <a href="https://leetcode.com/problems/palindrome-linked-list/" target="_blank">(Optional) Palindrome Linked List (234)</a>
+            </label>
+            <textarea id="notes-3-6" placeholder="Add notes here..." oninput="saveNotes('notes-3-6')"></textarea>
+        </div>
+    </div>
+
+    <!-- Week 4: Trees (Easy) -->
+    <div class="week">
+        <h2>Week 4: Trees (Easy)</h2>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-4-1" onchange="saveState('problem-4-1')">
+                <a href="https://leetcode.com/problems/binary-tree-preorder-traversal/" target="_blank">Binary Tree Preorder Traversal (144)</a>
+            </label>
+            <textarea id="notes-4-1" placeholder="Add notes here..." oninput="saveNotes('notes-4-1')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-4-2" onchange="saveState('problem-4-2')">
+                <a href="https://leetcode.com/problems/binary-tree-inorder-traversal/" target="_blank">Binary Tree Inorder Traversal (94)</a>
+            </label>
+            <textarea id="notes-4-2" placeholder="Add notes here..." oninput="saveNotes('notes-4-2')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-4-3" onchange="saveState('problem-4-3')">
+                <a href="https://leetcode.com/problems/binary-tree-postorder-traversal/" target="_blank">Binary Tree Postorder Traversal (145)</a>
+            </label>
+            <textarea id="notes-4-3" placeholder="Add notes here..." oninput="saveNotes('notes-4-3')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-4-4" onchange="saveState('problem-4-4')">
+                <a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/" target="_blank">Maximum Depth of Binary Tree (104)</a>
+            </label>
+            <textarea id="notes-4-4" placeholder="Add notes here..." oninput="saveNotes('notes-4-4')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-4-5" onchange="saveState('problem-4-5')">
+                <a href="https://leetcode.com/problems/same-tree/" target="_blank">Same Tree (100)</a>
+            </label>
+            <textarea id="notes-4-5" placeholder="Add notes here..." oninput="saveNotes('notes-4-5')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-4-6" onchange="saveState('problem-4-6')">
+                <a href="https://leetcode.com/problems/invert-binary-tree/" target="_blank">Invert Binary Tree (226)</a>
+            </label>
+            <textarea id="notes-4-6" placeholder="Add notes here..." oninput="saveNotes('notes-4-6')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-4-7" onchange="saveState('problem-4-7')">
+                <a href="https://leetcode.com/problems/symmetric-tree/" target="_blank">(Optional) Symmetric Tree (101)</a>
+            </label>
+            <textarea id="notes-4-7" placeholder="Add notes here..." oninput="saveNotes('notes-4-7')"></textarea>
+        </div>
+    </div>
+
+    <!-- Week 5: Graphs and DFS/BFS (Easy to Medium) -->
+    <div class="week">
+        <h2>Week 5: Graphs and DFS/BFS (Easy to Medium)</h2>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-5-1" onchange="saveState('problem-5-1')">
+                <a href="https://leetcode.com/problems/number-of-islands/" target="_blank">Number of Islands (200)</a>
+            </label>
+            <textarea id="notes-5-1" placeholder="Add notes here..." oninput="saveNotes('notes-5-1')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-5-2" onchange="saveState('problem-5-2')">
+                <a href="https://leetcode.com/problems/flood-fill/" target="_blank">Flood Fill (733)</a>
+            </label>
+            <textarea id="notes-5-2" placeholder="Add notes here..." oninput="saveNotes('notes-5-2')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-5-3" onchange="saveState('problem-5-3')">
+                <a href="https://leetcode.com/problems/walls-and-gates/" target="_blank">Walls and Gates (286)</a>
+            </label>
+            <textarea id="notes-5-3" placeholder="Add notes here..." oninput="saveNotes('notes-5-3')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-5-4" onchange="saveState('problem-5-4')">
+                <a href="https://leetcode.com/problems/clone-graph/" target="_blank">Clone Graph (133)</a>
+            </label>
+            <textarea id="notes-5-4" placeholder="Add notes here..." oninput="saveNotes('notes-5-4')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-5-5" onchange="saveState('problem-5-5')">
+                <a href="https://leetcode.com/problems/course-schedule/" target="_blank">Course Schedule (207)</a>
+            </label>
+            <textarea id="notes-5-5" placeholder="Add notes here..." oninput="saveNotes('notes-5-5')"></textarea>
+        </div>
+    </div>
+
+    <!-- Week 6: Dynamic Programming (Easy to Medium) -->
+    <div class="week">
+        <h2>Week 6: Dynamic Programming (Easy to Medium)</h2>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-6-1" onchange="saveState('problem-6-1')">
+                <a href="https://leetcode.com/problems/climbing-stairs/" target="_blank">Climbing Stairs (70)</a>
+            </label>
+            <textarea id="notes-6-1" placeholder="Add notes here..." oninput="saveNotes('notes-6-1')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-6-2" onchange="saveState('problem-6-2')">
+                <a href="https://leetcode.com/problems/house-robber/" target="_blank">House Robber (198)</a>
+            </label>
+            <textarea id="notes-6-2" placeholder="Add notes here..." oninput="saveNotes('notes-6-2')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-6-3" onchange="saveState('problem-6-3')">
+                <a href="https://leetcode.com/problems/coin-change/" target="_blank">Coin Change (322)</a>
+            </label>
+            <textarea id="notes-6-3" placeholder="Add notes here..." oninput="saveNotes('notes-6-3')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-6-4" onchange="saveState('problem-6-4')">
+                <a href="https://leetcode.com/problems/fibonacci-number/" target="_blank">Fibonacci Number (509)</a>
+            </label>
+            <textarea id="notes-6-4" placeholder="Add notes here..." oninput="saveNotes('notes-6-4')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-6-5" onchange="saveState('problem-6-5')">
+                <a href="https://leetcode.com/problems/unique-paths/" target="_blank">Unique Paths (62)</a>
+            </label>
+            <textarea id="notes-6-5" placeholder="Add notes here..." oninput="saveNotes('notes-6-5')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-6-6" onchange="saveState('problem-6-6')">
+                <a href="https://leetcode.com/problems/longest-increasing-subsequence/" target="_blank">(Optional) Longest Increasing Subsequence (300)</a>
+            </label>
+            <textarea id="notes-6-6" placeholder="Add notes here..." oninput="saveNotes('notes-6-6')"></textarea>
+        </div>
+    </div>
+
+    <!-- Week 7: Advanced Arrays and Strings (Medium) -->
+    <div class="week">
+        <h2>Week 7: Advanced Arrays and Strings (Medium)</h2>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-7-1" onchange="saveState('problem-7-1')">
+                <a href="https://leetcode.com/problems/3sum/" target="_blank">3Sum (15)</a>
+            </label>
+            <textarea id="notes-7-1" placeholder="Add notes here..." oninput="saveNotes('notes-7-1')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-7-2" onchange="saveState('problem-7-2')">
+                <a href="https://leetcode.com/problems/container-with-most-water/" target="_blank">Container With Most Water (11)</a>
+            </label>
+            <textarea id="notes-7-2" placeholder="Add notes here..." oninput="saveNotes('notes-7-2')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-7-3" onchange="saveState('problem-7-3')">
+                <a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" target="_blank">Longest Substring Without Repeating Characters (3)</a>
+            </label>
+            <textarea id="notes-7-3" placeholder="Add notes here..." oninput="saveNotes('notes-7-3')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-7-4" onchange="saveState('problem-7-4')">
+                <a href="https://leetcode.com/problems/group-anagrams/" target="_blank">Group Anagrams (49)</a>
+            </label>
+            <textarea id="notes-7-4" placeholder="Add notes here..." oninput="saveNotes('notes-7-4')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-7-5" onchange="saveState('problem-7-5')">
+                <a href="https://leetcode.com/problems/minimum-window-substring/" target="_blank">(Optional) Minimum Window Substring (76)</a>
+            </label>
+            <textarea id="notes-7-5" placeholder="Add notes here..." oninput="saveNotes('notes-7-5')"></textarea>
+        </div>
+    </div>
+
+    <!-- Week 8: Advanced Topics (Medium to Hard) -->
+    <div class="week">
+        <h2>Week 8: Advanced Topics (Medium to Hard)</h2>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-8-1" onchange="saveState('problem-8-1')">
+                <a href="https://leetcode.com/problems/merge-k-sorted-lists/" target="_blank">Merge K Sorted Lists (23)</a>
+            </label>
+            <textarea id="notes-8-1" placeholder="Add notes here..." oninput="saveNotes('notes-8-1')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-8-2" onchange="saveState('problem-8-2')">
+                <a href="https://leetcode.com/problems/top-k-frequent-elements/" target="_blank">Top K Frequent Elements (347)</a>
+            </label>
+            <textarea id="notes-8-2" placeholder="Add notes here..." oninput="saveNotes('notes-8-2')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-8-3" onchange="saveState('problem-8-3')">
+                <a href="https://leetcode.com/problems/word-search/" target="_blank">Word Search (79)</a>
+            </label>
+            <textarea id="notes-8-3" placeholder="Add notes here..." oninput="saveNotes('notes-8-3')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-8-4" onchange="saveState('problem-8-4')">
+                <a href="https://leetcode.com/problems/course-schedule-ii/" target="_blank">Course Schedule II (210)</a>
+            </label>
+            <textarea id="notes-8-4" placeholder="Add notes here..." oninput="saveNotes('notes-8-4')"></textarea>
+        </div>
+        <div class="problem">
+            <label>
+                <input type="checkbox" id="problem-8-5" onchange="saveState('problem-8-5')">
+                <a href="https://leetcode.com/problems/alien-dictionary/" target="_blank">(Optional) Alien Dictionary (269)</a>
+            </label>
+            <textarea id="notes-8-5" placeholder="Add notes here..." oninput="saveNotes('notes-8-5')"></textarea>
+        </div>
+    </div>
+
+    <script>
+        // Load saved states from localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStates();
+            loadNotes();
+        });
+
+        function saveState(id) {
+            const checkbox = document.getElementById(id);
+            localStorage.setItem(id, checkbox.checked);
+        }
+
+        function loadStates() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                const savedState = localStorage.getItem(checkbox.id);
+                if (savedState !== null) {
+                    checkbox.checked = savedState === 'true';
+                }
+            });
+        }
+
+        function saveNotes(id) {
+            const textarea = document.getElementById(id);
+            localStorage.setItem(id, textarea.value);
+        }
+
+        function loadNotes() {
+            const textareas = document.querySelectorAll('textarea');
+            textareas.forEach(textarea => {
+                const savedNotes = localStorage.getItem(textarea.id);
+                if (savedNotes !== null) {
+                    textarea.value = savedNotes;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
