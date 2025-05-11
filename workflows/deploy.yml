@@ -4,54 +4,53 @@ on:
   push:
     branches:
       - main
-  # Allow manual trigger for saving notes
-  workflow_dispatch:
-    inputs:
-      note_id:
-        description: 'ID of the note'
-        required: true
-      note_content:
-        description: 'Content of the note'
-        required: true
+  repository_dispatch:
+    types: [save_note]
+
+permissions:
+  contents: write
+  pages: write
 
 jobs:
-  save-note:
-    if: github.event_name == 'workflow_dispatch'
+  save-notes:
     runs-on: ubuntu-latest
+    if: github.event_name == 'repository_dispatch'
     steps:
       - uses: actions/checkout@v2
-      
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create notes directory
         run: mkdir -p notes
 
-      - name: Save Note
+      - name: Update notes
         run: |
-          echo "${{ github.event.inputs.note_content }}" > "notes/${{ github.event.inputs.note_id }}.txt"
+          NOTES_FILE="notes/notes.json"
+          if [ ! -f "$NOTES_FILE" ]; then
+            echo "{}" > "$NOTES_FILE"
+          fi
           
-      - name: Commit and Push Note
+          # Update the note in notes.json
+          jq --arg id "${{ github.event.client_payload.note_id }}" \
+             --arg content "${{ github.event.client_payload.content }}" \
+             '.[$id] = $content' "$NOTES_FILE" > temp.json && mv temp.json "$NOTES_FILE"
+
+      - name: Commit notes
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
           git add notes/
-          git commit -m "Save note ${{ github.event.inputs.note_id }}"
+          git commit -m "Update notes"
           git push
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [save-note]
+    needs: [save-notes]
     if: always()
     steps:
       - uses: actions/checkout@v2
         with:
-          persist-credentials: false
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
-      - name: Install Dependencies
-        run: npm install
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@4.1.5
