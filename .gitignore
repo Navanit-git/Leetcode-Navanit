@@ -1,0 +1,7 @@
+# Ignore notes.json for workflow triggers
+notes.json
+
+# Common ignores
+node_modules/
+.env
+.DS_Store

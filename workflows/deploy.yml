@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'notes.json'
   repository_dispatch:
     types: [save_note]
 

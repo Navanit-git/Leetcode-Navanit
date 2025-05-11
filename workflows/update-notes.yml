@@ -4,6 +4,9 @@ on:
   repository_dispatch:
     types: [update_notes]
   workflow_dispatch: # Allow manual trigger
+  push:
+    paths-ignore:
+      - 'notes.json'
 
 permissions:
   contents: write
