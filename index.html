@@ -957,8 +957,9 @@
 
     <script>
         // Your repository details
-        const REPO_OWNER = 'Navanit-git'; // Replace with your GitHub username
+        const REPO_OWNER = 'Navanit-git'; // Your GitHub username
         const REPO_NAME = 'Leetcode-Navanit';
+        const GITHUB_TOKEN = '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'; // You'll need to replace this with your actual GitHub token
         
         // Load saved notes on startup
         document.addEventListener('DOMContentLoaded', () => {
@@ -970,17 +971,21 @@
             const content = textarea.value;
             
             try {
-                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows/deploy.yml/dispatches`, {
-                    method: 'POST',
+                // Create notes directory if it doesn't exist
+                await createNotesDirectory();
+
+                // Save the note content
+                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/notes/${id}.txt`, {
+                    method: 'PUT',
                     headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
                         'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        ref: 'main',
-                        inputs: {
-                            note_id: id,
-                            note_content: content
-                        }
+                        message: `Update note ${id}`,
+                        content: btoa(unescape(encodeURIComponent(content))),
+                        branch: 'main'
                     })
                 });
 
@@ -995,11 +1000,52 @@
             }
         }
 
+        async function createNotesDirectory() {
+            try {
+                // Check if notes directory exists
+                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/notes`, {
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                if (!response.ok && response.status === 404) {
+                    // Create notes directory
+                    await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/notes/.gitkeep`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `token ${GITHUB_TOKEN}`,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: 'Create notes directory',
+                            content: '',
+                            branch: 'main'
+                        })
+                    });
+                }
+            } catch (error) {
+                console.error('Error creating notes directory:', error);
+            }
+        }
+
         async function loadNotesFromGitHub() {
             try {
-                // Get all notes from the notes directory in your repository
-                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/notes`);
+                // Get all notes from the notes directory
+                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/notes`, {
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
                 if (!response.ok) {
+                    if (response.status === 404) {
+                        // Notes directory doesn't exist yet, that's okay
+                        return;
+                    }
                     throw new Error('Failed to fetch notes');
                 }
 
@@ -1009,8 +1055,12 @@
                 for (const file of files) {
                     if (file.name.endsWith('.txt')) {
                         const noteId = file.name.replace('.txt', '');
-                        const noteContent = await fetch(file.download_url);
-                        const content = await noteContent.text();
+                        const noteResponse = await fetch(file.download_url, {
+                            headers: {
+                                'Authorization': `token ${GITHUB_TOKEN}`
+                            }
+                        });
+                        const content = await noteResponse.text();
                         
                         const textarea = document.getElementById(noteId);
                         if (textarea) {
@@ -1022,13 +1072,13 @@
                 showMessage('Notes loaded successfully!', 'success');
             } catch (error) {
                 console.error('Error loading notes:', error);
-                showMessage('Error loading notes. Please refresh the page.', 'error');
+                showMessage('Error loading notes. Please try again.', 'error');
             }
         }
 
         function saveState(id) {
             const checkbox = document.getElementById(id);
-            // We'll save checkbox states along with notes
+            // Save checkbox states as notes
             saveNote(id + '-state', checkbox.checked.toString());
         }
 
