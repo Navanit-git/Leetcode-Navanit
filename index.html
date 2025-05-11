@@ -97,9 +97,7 @@
         <h1>LeetCode Problems Tracker</h1>
         <div class="github-info">
             <h3>GitHub Sync Settings</h3>
-            <p>Your progress is saved locally. To sync with GitHub:</p>
-            <button onclick="configureGitHub()" class="save-btn">Configure GitHub</button>
-            <div id="github-status" class="status"></div>
+            <p>Your progress is saved locally.</p>
         </div>
     </div>
 
@@ -958,127 +956,21 @@
     </div>
 
     <script>
-        const GITHUB_CONFIG_KEY = 'github_config';
-        let githubConfig = null;
-
-        // Load GitHub configuration on startup
+        // Load saved data on startup
         document.addEventListener('DOMContentLoaded', () => {
-            loadGitHubConfig();
             loadStatesAndNotes();
         });
 
-        function loadGitHubConfig() {
-            const savedConfig = localStorage.getItem(GITHUB_CONFIG_KEY);
-            if (savedConfig) {
-                githubConfig = JSON.parse(savedConfig);
-                updateGitHubStatus('Connected to GitHub repository: ' + githubConfig.repo, 'success');
-            }
-        }
-
-        function configureGitHub() {
-            const token = prompt('Enter your GitHub Personal Access Token (needs repo scope):');
-            if (!token) return;
-
-            const repo = prompt('Enter your repository name (username/repo):');
-            if (!repo) return;
-
-            githubConfig = { token, repo };
-            localStorage.setItem(GITHUB_CONFIG_KEY, JSON.stringify(githubConfig));
-            updateGitHubStatus('GitHub configuration saved successfully!', 'success');
-            syncWithGitHub();
-        }
-
-        function updateGitHubStatus(message, type = 'success') {
-            const status = document.getElementById('github-status');
-            status.textContent = message;
-            status.className = 'status ' + type;
-        }
-
-        async function syncWithGitHub() {
-            if (!githubConfig) {
-                updateGitHubStatus('Please configure GitHub first', 'error');
-                return;
-            }
-
-            try {
-                const allNotes = getAllNotesData();
-                for (const [id, content] of Object.entries(allNotes)) {
-                    await saveNoteToGitHub(id, content);
-                }
-                updateGitHubStatus('All notes synced with GitHub successfully!', 'success');
-            } catch (error) {
-                console.error('Sync error:', error);
-                updateGitHubStatus('Error syncing with GitHub: ' + error.message, 'error');
-            }
-        }
-
-        function getAllNotesData() {
-            const notes = {};
-            const textareas = document.querySelectorAll('textarea');
-            textareas.forEach(textarea => {
-                const savedNote = localStorage.getItem(textarea.id);
-                if (savedNote) {
-                    notes[textarea.id] = savedNote;
-                }
-            });
-            return notes;
-        }
-
-        async function saveNoteToGitHub(id, content) {
-            if (!githubConfig) return;
-
-            const path = `notes/${id}.txt`;
-            const encodedContent = btoa(unescape(encodeURIComponent(content)));
-
-            try {
-                // Try to get existing file first
-                const existingFile = await fetch(`https://api.github.com/repos/${githubConfig.repo}/contents/${path}`, {
-                    headers: {
-                        'Authorization': `token ${githubConfig.token}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                }).then(res => res.json()).catch(() => null);
-
-                const method = 'PUT';
-                const body = {
-                    message: `Update note ${id}`,
-                    content: encodedContent
-                };
-
-                if (existingFile?.sha) {
-                    body.sha = existingFile.sha;
-                }
-
-                await fetch(`https://api.github.com/repos/${githubConfig.repo}/contents/${path}`, {
-                    method,
-                    headers: {
-                        'Authorization': `token ${githubConfig.token}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(body)
-                });
-            } catch (error) {
-                console.error(`Error saving note ${id}:`, error);
-                throw error;
-            }
-        }
-
-        // Local storage functions
-        function saveState(id) {
-            const checkbox = document.getElementById(id);
-            localStorage.setItem(id, checkbox.checked);
-        }
-
+        // Save note to local storage
         function saveNote(id) {
             const textarea = document.getElementById(id);
             const content = textarea.value;
             localStorage.setItem(id, content);
-            
-            if (githubConfig) {
-                saveNoteToGitHub(id, content)
-                    .then(() => updateGitHubStatus('Note saved successfully!', 'success'))
-                    .catch(error => updateGitHubStatus('Error saving note: ' + error.message, 'error'));
-            }
+        }
+
+        function saveState(id) {
+            const checkbox = document.getElementById(id);
+            localStorage.setItem(id, checkbox.checked);
         }
 
         function loadStatesAndNotes() {
@@ -1106,9 +998,13 @@
                 checkbox.addEventListener('change', () => saveState(checkbox.id));
             });
 
-            // Add input listeners to textareas
+            // Add input listeners to textareas with debounce
             document.querySelectorAll('textarea').forEach(textarea => {
-                textarea.addEventListener('input', () => saveNote(textarea.id));
+                let timeout;
+                textarea.addEventListener('input', () => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => saveNote(textarea.id), 1000); // Save after 1 second of no typing
+                });
             });
         });
     </script>
