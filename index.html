@@ -956,39 +956,90 @@
     </div>
 
     <script>
-        // Load saved data on startup
+        // Your repository details
+        const REPO_OWNER = 'Navanit-Naik'; // Replace with your GitHub username
+        const REPO_NAME = 'Leetcode-Navanit';
+        
+        // Load saved notes on startup
         document.addEventListener('DOMContentLoaded', () => {
-            loadStatesAndNotes();
+            loadNotesFromGitHub();
         });
 
-        // Save note to local storage
-        function saveNote(id) {
+        async function saveNote(id) {
             const textarea = document.getElementById(id);
             const content = textarea.value;
-            localStorage.setItem(id, content);
+            
+            try {
+                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows/deploy.yml/dispatches`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/vnd.github.v3+json',
+                    },
+                    body: JSON.stringify({
+                        ref: 'main',
+                        inputs: {
+                            note_id: id,
+                            note_content: content
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to save note');
+                }
+
+                showMessage('Note saved successfully!', 'success');
+            } catch (error) {
+                console.error('Error saving note:', error);
+                showMessage('Error saving note. Please try again.', 'error');
+            }
+        }
+
+        async function loadNotesFromGitHub() {
+            try {
+                // Get all notes from the notes directory in your repository
+                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/notes`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch notes');
+                }
+
+                const files = await response.json();
+                
+                // Load each note file
+                for (const file of files) {
+                    if (file.name.endsWith('.txt')) {
+                        const noteId = file.name.replace('.txt', '');
+                        const noteContent = await fetch(file.download_url);
+                        const content = await noteContent.text();
+                        
+                        const textarea = document.getElementById(noteId);
+                        if (textarea) {
+                            textarea.value = content;
+                        }
+                    }
+                }
+
+                showMessage('Notes loaded successfully!', 'success');
+            } catch (error) {
+                console.error('Error loading notes:', error);
+                showMessage('Error loading notes. Please refresh the page.', 'error');
+            }
         }
 
         function saveState(id) {
             const checkbox = document.getElementById(id);
-            localStorage.setItem(id, checkbox.checked);
+            // We'll save checkbox states along with notes
+            saveNote(id + '-state', checkbox.checked.toString());
         }
 
-        function loadStatesAndNotes() {
-            // Load checkboxes
-            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                const savedState = localStorage.getItem(checkbox.id);
-                if (savedState !== null) {
-                    checkbox.checked = savedState === 'true';
-                }
-            });
-
-            // Load notes
-            document.querySelectorAll('textarea').forEach(textarea => {
-                const savedNote = localStorage.getItem(textarea.id);
-                if (savedNote !== null) {
-                    textarea.value = savedNote;
-                }
-            });
+        function showMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = message;
+            messageDiv.className = `status ${type}`;
+            document.body.insertBefore(messageDiv, document.body.firstChild);
+            
+            // Remove message after 3 seconds
+            setTimeout(() => messageDiv.remove(), 3000);
         }
 
         // Add event listeners
